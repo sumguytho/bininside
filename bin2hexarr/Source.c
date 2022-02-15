@@ -2,6 +2,40 @@
 #include <stdio.h>
 #include <Windows.h>
 
+void variadiccleanup(const char *fmt, ...) {
+	int i = 0;
+	va_list args;
+
+	va_start(args, fmt);
+	while (fmt[i]) {
+		switch (fmt[i]) {
+			//handle
+		case 'h':
+		case 'H': {
+			HANDLE h = va_arg(args, HANDLE);
+			if (h && h != INVALID_HANDLE_VALUE)
+				CloseHandle(h);
+		} break;
+			//stream
+		case 'f':
+		case 'F': {
+			FILE* f = va_arg(args, FILE*);
+			if (f)
+				fclose(f);
+		} break;
+			//view of file mapping
+		case 'v':
+		case 'V': {
+			LPVOID v = va_arg(args, LPVOID);
+			if (v)
+				UnmapViewOfFile(v);
+		} break;
+		}
+		i++;
+	}
+	va_end(args);
+}
+
 int main(int argc, char *argv[]) {
 	FILE* ofile = stdout;
 
@@ -11,13 +45,13 @@ int main(int argc, char *argv[]) {
 			"If output file is not specified stdout is assumed\n"
 			"Outputs C array byte sequence for given file, doesn't include array definition\n"
 		);
-		return EXIT_FAILURE;
+		return EXIT_SUCCESS;
 	}
 
 	if (argc > 2) {
 		ofile = freopen(argv[2], "w+", stdout);
 		if (!ofile)
-			printf("can't redirect output to %s\n", argv[2]);
+			fprintf(stderr, "can't redirect output to %s\n", argv[2]);
 	}
 	
 	SYSTEM_INFO sysinfo;
@@ -38,6 +72,7 @@ int main(int argc, char *argv[]) {
 
 	if (hfile == INVALID_HANDLE_VALUE) {
 		fprintf(stderr, "unable to open file %s\n", argv[1]);
+		variadiccleanup("f", ofile);
 		return EXIT_FAILURE;
 	}
 	GetSystemInfo(&sysinfo);
@@ -45,11 +80,11 @@ int main(int argc, char *argv[]) {
 	//mapping offset must be a multiple of granularity
 	buffersz = sysinfo.dwAllocationGranularity;
 
-	//filesz = pointer to high dword of file size
 	fileszlow = GetFileSize(hfile, &fileszhigh);
 	filesz = (ULONGLONG)fileszhigh << 32 | fileszlow;
 	if (!filesz) {
 		fprintf(stderr, "input file is empty\n");
+		variadiccleanup("hf", hfile, ofile);
 		return EXIT_FAILURE;
 	}
 	hmapping = CreateFileMapping(
@@ -62,6 +97,7 @@ int main(int argc, char *argv[]) {
 	);
 	if (!hmapping) {
 		fprintf(stderr, "can't create mapping object for input file\n");
+		variadiccleanup("hf", hfile, ofile);
 		return EXIT_FAILURE;
 	}
 	do {
@@ -75,6 +111,7 @@ int main(int argc, char *argv[]) {
 		);
 		if (!filedata) {
 			fprintf(stderr, "can't map view of file mapping into address space\n");
+			variadiccleanup("hhf", hmapping, hfile, ofile);
 			return EXIT_FAILURE;
 		}
 		if (fileoffset)
@@ -94,9 +131,5 @@ int main(int argc, char *argv[]) {
 		UnmapViewOfFile(filedata);
 	} while (filesz - fileoffset != 0);
 
-	CloseHandle(hmapping);
-	CloseHandle(hfile);
-
-	if (!ofile)
-		fclose(ofile);
+	variadiccleanup("hhf", hmapping, hfile, ofile);
 }
