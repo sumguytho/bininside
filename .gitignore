@@ -1,0 +1,8 @@
+\.vs/
+*.sln
+*.vcxproj
+*.user
+*.filters
+*.hexarr
+Debug/
+Release/
