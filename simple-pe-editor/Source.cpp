@@ -3,10 +3,8 @@
 #include "PEImage.hpp"
 
 int main(int argc, char *argv[]) {
-	// [0] target section RVA syncPID caller
-
 	if (argc < 6) {
-		std::cout << "5 arguments are expected";
+		std::cout << "Usage: <this_app> <target> <section> <RVA> <syncPID> <caller>" << std::endl;
 		return !0;
 	}
 
@@ -44,7 +42,8 @@ int main(int argc, char *argv[]) {
 
 	char buf[1024];
 	unsigned curPID = GetCurrentProcessId();
-	if (sprintf_s(buf, "\"%s\" cleanup %d", argv[5], curPID) == -1) {
+	// [0] cleanup syncPID target
+	if (sprintf_s(buf, "\"%s\" cleanup %d \"%s\"", argv[5], curPID, argv[0]) == -1) {
 		std::cout << "Can't prepare command line." << std::endl;
 		return !0;
 	}
