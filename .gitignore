@@ -4,5 +4,6 @@
 *.user
 *.filters
 *.hexarr
+*.aps
 Debug/
 Release/
