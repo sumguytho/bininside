@@ -64,7 +64,7 @@ void HandleCleanupRequest(LPCWSTR cmdLine, wchar_t exePath[], unsigned bufSize) 
 		if (nArgs > i + 2) {
 			cleanupHandled = true;
 			DWORD pid;
-			if (swscanf_s(szArglist[i + 1], L"%d", &pid, 4)) {
+			if (swscanf_s(szArglist[i + 1], L"%d", &pid)) {
 				SyncWithPID(pid);
 
 				std::ifstream ifile(szArglist[i + 2], std::ios::in | std::ios::binary);
