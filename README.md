@@ -31,7 +31,7 @@ If the image isn't modifiable at the moment, pe-editor will omit the incrementin
 ## Setup
 
 The RVA is set to 0xcccccccc by default, this is a reserved value that makes it search first 256 bytes of specified section for global variable.
-Global variable *should* be in .data section. Pointing RVA at correct global variable location will do as well.
+Global variable *had better be* in .data section. Pointing RVA at correct global variable location will do as well.
 
 ## Accidentally deleting files
 Shouldn't happen, *probably*. gui-app removes a file only when it's the exact byte copy of pe-editor it carries within itself.
