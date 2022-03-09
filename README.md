@@ -35,6 +35,6 @@ Global variable *should* be in .data section. Pointing RVA at correct global var
 
 ## Accidentally deleting files
 Shouldn't happen, *probably*. gui-app removes a file only when it's the exact byte copy of pe-editor it carries within itself.
-pe-editor checks for 0xfadedbee signature before global variable. Should be sufficient most of the time. This is important 
+pe-editor checks for 0xfadedbee signature before incrementing global variable. Should be sufficient most of the time. This is important 
 because, unlike gui-app, pe-editor can't handle unicode. And, since it receives gui-app path as one of its arguments, 
 launching gui-app with unicode in its path is ***bad***.
