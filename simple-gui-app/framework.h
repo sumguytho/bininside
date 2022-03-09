@@ -16,12 +16,20 @@
 
 #include <stdio.h>
 #include <shellapi.h>
+#include <TlHelp32.h>
+#include <fstream>
 
+#pragma pack(1)
 struct someStruct {
     unsigned signature = 0xfadedbee;
     unsigned launchCount = 0;
-    unsigned RVA = 0;
+    // specified manually, CFF explorer or smth
+    // there might be a smart way to do that
+    unsigned RVA = 0xcccccccc;
 };
+
+// including it in structure causes weird stuff to happen
+const char section[9] = ".data";
 
 extern someStruct someData;
 

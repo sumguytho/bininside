@@ -37,6 +37,8 @@ public:
     void release();
     void write(const char* sectionName, DWORD RVA, unsigned char* data, unsigned int dataSize);
     void read(const char* sectionName, DWORD RVA, unsigned char* data, unsigned int dataSize);
+
+    explicit operator bool();
 };
 
 #endif

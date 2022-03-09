@@ -83,8 +83,12 @@ PEImage::PESection *PEImage::sectionByName(const char* name) {
 	return nullptr;
 }
 
+PEImage::operator bool() {
+	return isLoaded();
+}
+
 void PEImage::release() {
-	inputFile.close();
+	if(inputFile.is_open()) inputFile.close();
 	fileLoaded = false;
 }
 
