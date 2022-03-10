@@ -39,7 +39,8 @@ bool IndependentProcess(TCHAR* cmdLine) {
 	return false;
 }
 
-void HandleCleanupRequest(LPCWSTR cmdLine, wchar_t exePath[], unsigned bufSize) {
+void HandleCleanupRequest(wchar_t exePath[], unsigned bufSize) {
+	LPCWSTR cmdLine = GetCommandLine();
 	int nArgs;
 	LPWSTR* szArglist = CommandLineToArgvW(cmdLine, &nArgs);
 
@@ -196,7 +197,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     _In_ int       nCmdShow) {
 	wchar_t exePath[MAX_PATH];
 
-	HandleCleanupRequest(lpCmdLine, exePath, MAX_PATH);
+	HandleCleanupRequest(exePath, MAX_PATH);
 
 	LookForCopies(wcsrchr(exePath, L'\\') + 1);
 
