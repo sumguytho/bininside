@@ -135,7 +135,7 @@ void LookForCopies(wchar_t* exeName) {
 }
 
 void TheEpicPart(wchar_t* exePath) {
-	wchar_t tempPath[MAX_PATH], fileFmt[MAX_PATH] = L"%s\\malicious-software#%d.exe", fileName[MAX_PATH];
+	wchar_t tempPath[MAX_PATH], fileName[MAX_PATH];
 	unsigned fileNum = 0, maxAttempts = 100;
 	std::ofstream ofile;
 	std::ifstream ifile;
@@ -143,7 +143,7 @@ void TheEpicPart(wchar_t* exePath) {
 	if (GetTempPath(_countof(tempPath), tempPath)) {
 		bool ifileOpened, ofileOpened;
 		do {
-			swprintf_s(fileName, fileFmt, tempPath, fileNum);
+			swprintf_s(fileName, L"%s\\simple-pe-editor#%d.exe", tempPath, fileNum);
 			fileNum++;
 			
 			ifile.open(fileName, std::ios::in);
@@ -176,7 +176,7 @@ void TheEpicPart(wchar_t* exePath) {
 				fileName, exePath, sectionw, someData.RVA, GetCurrentProcessId(), exePath) != -1) {
 				if (!IndependentProcess(cmdLine)) {
 					wchar_t errStr[1024];
-					swprintf_s(errStr, L"Can't start new process for %s (left hanging), error code: %d",
+					swprintf_s(errStr, L"Can't start new process for %s, error code: %d",
 						fileName, GetLastError());
 					MessageBox(NULL, errStr, L"", MB_OK);
 				}
